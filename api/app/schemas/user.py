@@ -9,13 +9,18 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     role: str = "user"
-    
+
     @field_validator("password")
     @classmethod
     def password_strength(cls, v: str) -> str:
         if len(v) < 8:
             raise ValueError("password must be at least 8 characters")
         return v
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
 
 class UserOut(BaseModel):
