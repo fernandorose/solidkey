@@ -1,10 +1,22 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from api.app.config.database import get_db
+from app.core.database import Base, engine, get_db
+from app.routes.user_routes import router as user_router
 
-app = FastAPI(title="SolidKey API", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="SolidKey API", version="0.1.0", lifespan=lifespan)
+app.include_router(user_router, prefix="/api")
+
 
 @app.get("/")
 def read_root():
@@ -13,6 +25,6 @@ def read_root():
 
 @app.get("/health/db")
 def health_db(db: Session = Depends(get_db)):
-    """Verifica que la API puede hablar con Postgres."""
+    "Verifies db connection"
     result = db.execute(text("SELECT 1")).scalar()
     return {"database": "connected" if result == 1 else "error"}
