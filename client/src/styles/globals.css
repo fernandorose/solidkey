@@ -1,0 +1,11 @@
+:root {
+  --default-font: "Roboto Variable", sans-serif;
+  --mono-font: "Geist Mono Variable", monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--default-font);
+}
